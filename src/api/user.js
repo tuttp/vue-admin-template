@@ -1,10 +1,14 @@
 import request from '@/utils/request'
 
+// 登入接口
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/LableClinteLogin',
     method: 'post',
-    data
+    data: {
+      UserCode: data.username,
+      PassWord: data.password
+    }
   })
 }
 

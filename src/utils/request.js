@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import querystring from 'querystring'
+// import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -15,11 +16,21 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
 
-    if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+    // if (store.getters.token) {
+    //   // let each request carry token
+    //   // ['X-Token'] is a custom headers key
+    //   // please modify it according to the actual situation
+    //   // config.headers['X-Token'] = getToken()
+    // }
+    // config.headers['Access-Control-Allow-Origin'] = '*'
+    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    if (
+      config.method === 'post' ||
+      config.method === 'put' ||
+      config.method === 'delete' ||
+      config.method === 'patch'
+    ) {
+      config.data = querystring.stringify(config.data)
     }
     return config
   },
@@ -43,12 +54,13 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
+    console.log('12222222222')
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.Status === -1) {
       Message({
-        message: res.message || 'Error',
+        message: res.Message || '出现错误！',
         type: 'error',
         duration: 5 * 1000
       })
@@ -66,19 +78,37 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(new Error(res.Message || 'Error'))
     } else {
       return res
     }
   },
   error => {
+    let msg = '网络异常，请重试'
     console.log('err' + error) // for debug
+    const errData = JSON.parse(JSON.stringify(error)).response
+    if (errData != undefined) {
+      switch (errData.status) {
+        // case 400: msg = '请求错误(400)'; break;
+        case 401: return history.push('/login'); break
+        case 403: msg = '拒绝访问(403)'; break
+        case 404: msg = '请求出错(404)'; break
+        case 408: msg = '请求超时(408)'; break
+        // case 500: msg = '服务器错误(500)'; break;
+        case 501: msg = '服务未实现(501)'; break
+        case 502: msg = '网络错误(502)'; break
+        case 503: msg = '服务不可用(503)'; break
+        case 504: msg = '网络超时(504)'; break
+        case 505: msg = 'HTTP版本不受支持(505)'; break
+        default: msg = errData.data.Message
+      }
+    }
     Message({
-      message: error.message,
+      message: msg,
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(error)
+    return Promise.reject(errData)
   }
 )
 
