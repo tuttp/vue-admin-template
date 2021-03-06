@@ -42,7 +42,11 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
-
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('@/views/settings/index'),
+  },
   {
     path: '/',
     component: Layout,

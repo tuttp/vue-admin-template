@@ -4,25 +4,25 @@ const TokenKey = 'web_token'
 const CodeKey = 'web_code'
 
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return localStorage.getItem(TokenKey)
 }
 
 export function getCode() {
-  return Cookies.get(CodeKey)
+  return localStorage.getItem(CodeKey)
 }
 
 export function setToken(token) {
-  return Cookies.set(TokenKey, token)
+  return localStorage.setItem(TokenKey, token)
 }
 
 export function setCode(Code) {
-  return Cookies.set(CodeKey, Code)
+  return localStorage.setItem(CodeKey, Code)
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  return localStorage.removeItem(TokenKey)
 }
 
 export function removeCode() {
-  return Cookies.remove(CodeKey)
+  return localStorage.removeItem(CodeKey)
 }

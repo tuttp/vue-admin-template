@@ -1,5 +1,5 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, setCode, removeToken, removeCode } from '@/utils/auth'
+import { getToken, setToken, setCode, getCode, removeToken, removeCode } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -38,8 +38,12 @@ const actions = {
         if (response.Status === 1) {
           // commit('SET_TOKEN', response.Message)
           // commit('SET_NAME', username.trim())
-          setToken(response.Message)
-          setCode(username.trim())
+          if(getToken()===null){
+            setToken(response.Message)
+          }
+          if(getCode()===null){
+            setCode(username.trim())
+          }
         }
         resolve()
       }).catch(error => {

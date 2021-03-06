@@ -401,6 +401,12 @@ export default {
           Name: getToken(),
           data: JSON.stringify(queryList)
         }).then(res => {
+          this.$alert('打印成功！', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              //
+            }
+          });
           console.log(res)
         })
       } else {
